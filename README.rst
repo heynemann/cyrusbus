@@ -48,7 +48,7 @@ The callback argument is needed so we can unsubscribe only your call. Since both
 
     bus.unsubscribe('event.key', callback).subscribe('my_event_reference', callback)
 
-This would make your call idempotent, meaning it can be called as many times as you want without side effects.
+Even though this is possible, it's not needed as subscribe will ignore any subsequent calls to it with the same subject and callback.
 
 What if I want to unsubscribe all subscribers to a given event? You just call::
 
