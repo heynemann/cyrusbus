@@ -27,7 +27,10 @@ Subscribing is what allows you to handle events that go through the bus. You can
 
 The first parameter is the event key, meaning that when someone publishes an event with the same key, this subscription will be triggered.
 
-The second parameter is the callback function. This is the function that will get executed when the given event is published. This function will be called with whatever arguments the publisher sent (the arguments will be unpacked).
+The second parameter is the callback function. This is the function that will get executed when the given event is published. This function will be called with whatever arguments the publisher sent (the arguments will be unpacked). The callback function will also receive the bus as the first argument. It should have this form::
+
+    def my_callback(self, bus, whatever, arguments, your, function, requires):
+        //does something with the arguments.
 
 .. warning::
 

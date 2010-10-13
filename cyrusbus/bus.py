@@ -4,7 +4,7 @@
 class Bus(object):
 
     def __init__(self):
-        self.subscriptions = {}
+        self.reset()
 
     def subscribe(self, key, callback, force=False):
         if key not in self.subscriptions:
@@ -48,3 +48,13 @@ class Bus(object):
 
     def has_any_subscriptions(self, key):
         return key in self.subscriptions and len(self.subscriptions[key]) > 0
+
+    def publish(self, key, *args, **kwargs):
+        if not self.has_any_subscriptions(key):
+            return self
+
+        for subscriber in self.subscriptions[key]:
+            subscriber['callback'](self, *args, **kwargs)
+
+    def reset(self):
+        self.subscriptions = {}

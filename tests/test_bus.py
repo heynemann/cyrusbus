@@ -6,13 +6,15 @@ import unittest
 from cyrusbus import Bus
 
 class TestBus(unittest.TestCase):
-    def callback(self, argument):
+    def callback(self, bus, argument):
+        self.called_bus = bus
         self.has_run = True
         self.argument = argument
 
     def setUp(self):
         self.bus = Bus()
         self.has_run = False
+        self.called_bus = None
 
     def test_can_haz_bus(self):
         assert self.bus
@@ -108,3 +110,43 @@ class TestBus(unittest.TestCase):
         self.bus.unsubscribe('test.key', self.callback)
 
         assert not self.bus.has_any_subscriptions('test.key')
+
+    def test_can_publish(self):
+        self.bus.subscribe('test.key', self.callback)
+
+        self.bus.publish('test.key', argument="something")
+
+        assert self.has_run
+        assert self.argument == "something"
+        assert self.called_bus == self.bus
+
+    def test_can_publish_with_noone_listening(self):
+        self.bus.publish('test.key', something="whatever")
+
+    def test_publish_is_chainable(self):
+        bus = self.bus.publish('test.key', something="whatever")
+        assert bus == self.bus
+
+    def test_subscribing_to_different_keys(self):
+        self.bus.subscribe('test.key', self.callback)
+        self.bus.subscribe('test.key2', self.callback)
+        self.bus.subscribe('test.key3', self.callback)
+
+        assert 'test.key' in self.bus.subscriptions
+        assert 'test.key2' in self.bus.subscriptions
+        assert 'test.key3' in self.bus.subscriptions
+
+        assert self.bus.subscriptions['test.key']
+        assert self.bus.subscriptions['test.key2']
+        assert self.bus.subscriptions['test.key3']
+
+    def test_can_reset_bus(self):
+        self.bus.subscribe('test.key', self.callback)
+        self.bus.subscribe('test.key2', self.callback)
+        self.bus.subscribe('test.key3', self.callback)
+
+        self.bus.reset()
+
+        assert 'test.key' not in self.bus.subscriptions
+        assert 'test.key2' not in self.bus.subscriptions
+        assert 'test.key3' not in self.bus.subscriptions
