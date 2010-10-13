@@ -3,6 +3,21 @@ Introduction
 
 CyrusBus is a VERY lightweight publish/subscribe event bus for python applications.
 
+It is worth noting that CyrusBus is 100% independent from other libraries and is 100% covered by tests. If you want to see how to use it (besides this documentation) just check the tests.
+
+Installing CyrusBus
+-------------------
+
+You can install CyrusBus from PyPI (http://pypi.python.org/pypi), using easy_install or PIP::
+    pip install cyrusbus
+    easy_install cyrusbus
+
+That should be it. To verify it's installed, open the python interpreter and type::
+
+    >>> import cyrusbus
+    >>> cyrusbus.__version__
+    '0.1.0'
+
 Using CyrusBus
 --------------
 
