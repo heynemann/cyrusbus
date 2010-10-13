@@ -19,3 +19,23 @@ class Bus(object):
             self.subscriptions[key].append(subscription)
 
         return self
+
+    def unsubscribe(self, key, callback):
+        if key not in self.subscriptions:
+            return self
+
+        subscription = {
+            'key': key,
+            'callback': callback
+        }
+
+        if subscription not in self.subscriptions[key]:
+            return self
+
+        self.subscriptions[key].remove(subscription)
+
+    def unsubscribe_all(self, key):
+        if key not in self.subscriptions:
+            return self
+
+        self.subscriptions[key] = []

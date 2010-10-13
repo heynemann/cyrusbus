@@ -41,3 +41,41 @@ class TestBus(unittest.TestCase):
         self.bus.subscribe('test.key', self.callback).subscribe('test.key', self.callback, force=True)
 
         assert len(self.bus.subscriptions['test.key']) == 2, len(self.bus.subscriptions['test.key'])
+
+    def test_unsubscribe_is_chainable(self):
+        bus = self.bus.unsubscribe('test.key', self.callback)
+        assert bus == self.bus
+
+    def test_unsubscribe_to_invalid_subject_does_nothing(self):
+        self.bus.unsubscribe('test.key', self.callback)
+
+        assert 'test.key' not in self.bus.subscriptions
+
+    def test_unsubscribe_to_invalid_callback_does_nothing(self):
+        self.bus.subscribe('test.key', self.callback)
+        self.bus.unsubscribe('test.key', lambda obj: obj)
+
+        assert len(self.bus.subscriptions['test.key']) == 1, len(self.bus.subscriptions['test.key'])
+
+    def test_can_unsubscribe_to_event(self):
+        self.bus.subscribe('test.key', self.callback).unsubscribe('test.key', self.callback)
+
+        assert len(self.bus.subscriptions['test.key']) == 0, len(self.bus.subscriptions['test.key'])
+
+    def test_unsubscribe_all_does_nothing_for_nonexistent_key(self):
+        self.bus.subscribe('test.key', self.callback)
+        self.bus.unsubscribe_all('other.key')
+
+        assert len(self.bus.subscriptions['test.key']) == 1, len(self.bus.subscriptions['test.key'])
+
+    def test_unsubscribe_all_is_chainable(self):
+        bus = self.bus.unsubscribe_all('test.key')
+        assert bus == self.bus
+
+    def test_unsubscribe_all(self):
+        self.bus.subscribe('test.key', self.callback)
+        self.bus.subscribe('test.key', lambda obj: obj)
+
+        self.bus.unsubscribe_all('test.key')
+
+        assert len(self.bus.subscriptions['test.key']) == 0, len(self.bus.subscriptions['test.key'])
