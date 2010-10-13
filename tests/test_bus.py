@@ -79,3 +79,32 @@ class TestBus(unittest.TestCase):
         self.bus.unsubscribe_all('test.key')
 
         assert len(self.bus.subscriptions['test.key']) == 0, len(self.bus.subscriptions['test.key'])
+
+    def test_has_subscription(self):
+        self.bus.subscribe('test.key', self.callback)
+
+        assert self.bus.has_subscription('test.key', self.callback)
+
+        self.bus.unsubscribe('test.key', self.callback)
+
+        assert not self.bus.has_subscription('test.key', self.callback)
+
+    def test_does_not_have_subscription_for_invalid_key(self):
+        assert not self.bus.has_subscription('test.key', self.callback)
+
+    def test_does_not_have_subscription_for_invalid_calback(self):
+        self.bus.subscribe('test.key', self.callback)
+
+        assert not self.bus.has_subscription('test.key', lambda obj: obj)
+
+    def test_has_any_subscriptions_for_invalid_key(self):
+        assert not self.bus.has_any_subscriptions('test.key')
+
+    def test_has_any_subscriptions(self):
+        self.bus.subscribe('test.key', self.callback)
+
+        assert self.bus.has_any_subscriptions('test.key')
+
+        self.bus.unsubscribe('test.key', self.callback)
+
+        assert not self.bus.has_any_subscriptions('test.key')

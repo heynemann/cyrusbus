@@ -15,27 +15,36 @@ class Bus(object):
             'callback': callback
         }
 
-        if force or (not subscription in self.subscriptions[key]):
+        if force or not self.has_subscription(key, callback):
             self.subscriptions[key].append(subscription)
 
         return self
 
     def unsubscribe(self, key, callback):
-        if key not in self.subscriptions:
+        if not self.has_subscription(key, callback):
             return self
 
-        subscription = {
+        self.subscriptions[key].remove({
             'key': key,
             'callback': callback
-        }
-
-        if subscription not in self.subscriptions[key]:
-            return self
-
-        self.subscriptions[key].remove(subscription)
+        })
 
     def unsubscribe_all(self, key):
         if key not in self.subscriptions:
             return self
 
         self.subscriptions[key] = []
+
+    def has_subscription(self, key, callback):
+        if key not in self.subscriptions:
+            return False
+
+        subscription = {
+            'key': key,
+            'callback': callback
+        }
+
+        return subscription in self.subscriptions[key]
+
+    def has_any_subscriptions(self, key):
+        return key in self.subscriptions and len(self.subscriptions[key]) > 0
