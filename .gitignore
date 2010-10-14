@@ -1,2 +1,4 @@
 *.pyc
 .coverage
+cyrusbus.egg-info/
+dist
