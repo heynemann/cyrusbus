@@ -150,3 +150,8 @@ class TestBus(unittest.TestCase):
         assert 'test.key' not in self.bus.subscriptions
         assert 'test.key2' not in self.bus.subscriptions
         assert 'test.key3' not in self.bus.subscriptions
+    
+    _bus = Bus()
+    
+    def only_one_instance_of_the_bus(self):
+        assert Bus() == self._bus
