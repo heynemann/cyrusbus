@@ -3,8 +3,75 @@
 
 class Bus(object):
 
+    _instances = {}
+
+    def __new__(cls, *args, **kwargs):
+        instance = object.__new__(cls, *args, **kwargs)
+        if str(*args) is not '':
+            Bus._instances[str(*args)] = instance
+        return instance
+
     def __init__(self):
         self.reset()
+
+
+    @staticmethod
+    def get_or_create(name):
+        """
+        Gets a specific bus instance or creates a new instance and returnes this one if no instance with the name was given.
+
+        :param name: The name of the bus instance which should be returned.
+        :return: The bus instance with the given name.
+        """
+        bus = Bus.get_bus(name)
+
+        if bus is None:
+            return Bus.__new__(Bus, name)
+
+        return bus
+
+    @staticmethod
+    def get_bus(name):
+        """
+        Returns a bus instance with the given name. If no bus instance was found None is returned.
+
+        :param name: The name of the bus instance that should be returned.
+        :return: The bus instance that was created with the given name or None if the name given is not connected with a bus.
+        """
+        try:
+            for bus_name in Bus._instances.keys():
+                if bus_name == name:
+                    return Bus._instances[bus_name]
+            return None
+        except Exception:
+            return None
+
+    @staticmethod
+    def get_bus_name(instance):
+        """
+        Returns the bus name of an given bus instance.
+
+        :param instance: The bus, which name should be returned.
+        :return: The name of the bus instance.
+        """
+        for instances_key, bus_instance in Bus._instances.iteritems():
+            if instance is bus_instance:
+                return instances_key
+        return None
+
+    @staticmethod
+    def delete_bus(name):
+        """
+        Deletes a specific bus with the given name.
+
+        :param name: The name of the bus instance.
+        :return: True if the bus was successfully deleted.
+        """
+        try:
+            del Bus._instances[name]
+            return True
+        except Exception:
+            return False
 
     def subscribe(self, key, callback, force=False):
         """
