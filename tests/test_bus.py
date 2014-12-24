@@ -150,3 +150,31 @@ class TestBus(unittest.TestCase):
         assert 'test.key' not in self.bus.subscriptions
         assert 'test.key2' not in self.bus.subscriptions
         assert 'test.key3' not in self.bus.subscriptions
+
+    def test_only_one_instance_of_the_bus(self):
+        bus_a = Bus.get_or_create('bus_a')
+        bus_b = Bus.get_bus('bus_a')
+        bus_c = Bus.get_or_create('bus_c')
+        bus_d = Bus()
+
+        assert bus_a is bus_b
+        assert bus_a is not bus_c
+        assert bus_d is not bus_a
+
+    def test_delete_bus_instances(self):
+        bus_x = Bus.get_or_create('bus_x')
+
+        assert bus_x in Bus._instances.values()
+
+        Bus.delete_bus('bus_x')
+
+        assert bus_x not in Bus._instances.values()
+
+    def test_bus_is_not_specific(self):
+        bus_y = Bus()
+        bus_z = Bus.get_or_create('bus_z')
+
+        assert bus_y is not bus_z
+
+if __name__ == '__main__':
+    unittest.main()
